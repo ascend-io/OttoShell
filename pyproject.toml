@@ -1,0 +1,44 @@
+[project]
+name = "otto-shell"
+version = "0.0.2"
+authors = [{ name = "Ascend", email = "hello@ascend.io" }]
+description = "Otto but in your shell!"
+readme = "readme.md"
+requires-python = ">=3.13"
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+]
+dependencies = [
+  # utils
+  'python-dotenv',
+  # UI
+  'rich',
+  'typer',
+  'prompt-toolkit',
+  'pyperclip',
+  # AI
+  'openai',
+  'openai-agents',
+]
+
+[project.optional-dependencies]
+dev = ["ruff", "ipython"]
+test = ["pytest"]
+
+[project.urls]
+"Homepage" = "https://github.com/ascend-io/OttoShell"
+"Bug Tracker" = "https://github.com/ascend-io/OttoShell/issues"
+
+[project.scripts]
+"os" = "otto_shell.cli:app"
+
+[build-system]
+# TODO: update to uv build system once available
+# https://github.com/astral-sh/uv/issues/3957
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.metadata]
+allow-direct-references = true # for @ git+https://-style dependencies and such
