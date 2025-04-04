@@ -19,7 +19,7 @@ console = Console()
 
 def print_separator():
     width = shutil.get_terminal_size().columns
-    console.print("-" * width)
+    console.print("-" * width, style="bold violet")
 
 
 # functions
