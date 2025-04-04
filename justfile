@@ -38,7 +38,7 @@ release-test:
 
 # publish
 release:
-    just build-python
+    just build
     @uv publish --token ${PYPI_TOKEN}
 
 # open
