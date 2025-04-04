@@ -88,7 +88,6 @@ def decision_tree(user_input: str):
         print_separator()
         rich.print(res) if res else None
         state["last_otto_response"] = res
-        rich.print(res)
 
     else:
         res = run_command(user_input)
