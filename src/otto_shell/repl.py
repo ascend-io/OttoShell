@@ -1,6 +1,7 @@
 # imports
 import os
 import rich
+import shutil
 
 from rich.console import Console
 
@@ -14,6 +15,11 @@ from otto_shell.flows.git import commit_flow
 
 # console setup
 console = Console()
+
+
+def print_separator():
+    width = shutil.get_terminal_size().columns
+    console.print("-" * width)
 
 
 # functions
@@ -79,8 +85,11 @@ def decision_tree(user_input: str):
             f"asking Otto ({get_otto_shell_model()})...", spinner="dots"
         ):
             res = question(user_input[1:], history=state.get("shell_history", []))
+        print_separator()
         rich.print(res) if res else None
         state["last_otto_response"] = res
+        rich.print(res)
+
     else:
         res = run_command(user_input)
         rich.print(res) if res else None
