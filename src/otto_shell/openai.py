@@ -5,7 +5,11 @@ import tiktoken
 
 from pydantic import BaseModel
 
-from otto_shell.utils import dedent_and_unwrap  # noqa
+from otto_shell.utils import (
+    dedent_and_unwrap,
+    get_otto_shell_model,
+    get_otto_shell_model_effort,
+)
 from otto_shell.state import state
 
 openai_api_key = os.environ.get("OPENAI_API_KEY")
@@ -36,8 +40,9 @@ def tokens_to_str(tokens: list[int], model: str = "gpt-4o-mini") -> str:
     return enc.decode(tokens)
 
 
-def question(q: str, history: list[str] = []) -> str:
-    model = "gpt-4o-mini"
+def question(q: str, model: str | None = None, history: list[str] = []) -> str:
+    model = model or get_otto_shell_model()
+    effort = get_otto_shell_model_effort()
     messages = [{"role": "developer", "content": h} for h in history]
     messages += [{"role": "user", "content": q}]
     instructions = "You are OttoShell. Help the user with their question."
@@ -46,11 +51,20 @@ def question(q: str, history: list[str] = []) -> str:
         "instructions": instructions,
         "input": messages,
         "previous_response_id": state.get("last_request_id", None),
+        "reasoning": {"effort": effort} if model.startswith("o") else None,
     }
     r = client.post("/responses", json=data)
-    state["last_request_id"] = r.json()["id"]
 
-    return r.json()["output"][0]["content"][0]["text"]
+    response_text = ""
+    j = r.json()
+    state["last_request_id"] = j["id"]
+    for output in j["output"]:
+        if "content" in output:
+            for c in output["content"]:
+                if "text" in c:
+                    response_text += c["text"]
+
+    return response_text
 
 
 def choose(

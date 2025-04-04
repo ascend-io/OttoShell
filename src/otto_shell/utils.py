@@ -31,17 +31,34 @@ def get_otto_shell_config() -> dict:
     return config
 
 
-def get_otto_shell_system_str() -> str:
-    # TODO: update
+def get_otto_shell_model() -> str:
     config = get_otto_shell_config()
-    system = config.get("ai").get("system")
+    model = config.get("ai", {}).get("model", "gpt-4o-mini")
+    return model
+
+
+def get_otto_shell_model_effort() -> str:
+    config = get_otto_shell_config()
+    effort = config.get("ai", {}).get("effort", "medium")
+    return effort
+
+
+def get_otto_shell_system_str() -> str:
+    config = get_otto_shell_config()
+    system = config.get("ai", {}).get("system", "You are OttoShell.")
     return system
 
 
-def get_otto_shell_aliases() -> dict:
+def get_otto_shell_aliases() -> dict[str, str]:
     config = get_otto_shell_config()
     aliases = config.get("aliases", {})
     return aliases
+
+
+def get_otto_shell_interactive_apps() -> list[str]:
+    config = get_otto_shell_config()
+    interactive_apps = config.get("interactive", {}).get("apps", [])
+    return interactive_apps
 
 
 def load_otto_shell_dotenv():

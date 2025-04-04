@@ -9,6 +9,7 @@ from prompt_toolkit import PromptSession
 from prompt_toolkit.history import FileHistory, InMemoryHistory
 from prompt_toolkit.document import Document
 from prompt_toolkit.completion import Completer, Completion
+from prompt_toolkit.enums import EditingMode
 
 
 # classes
@@ -266,7 +267,9 @@ class PathCompleter(Completer):
 
 # functions
 def get_input(prompt_text: str, history: FileHistory | InMemoryHistory) -> str:
-    session = PromptSession(history=history, completer=PathCompleter())
+    session = PromptSession(
+        history=history, completer=PathCompleter(), editing_mode=EditingMode.VI
+    )
     return session.prompt(prompt_text).strip()
 
 

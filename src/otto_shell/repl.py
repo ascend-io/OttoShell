@@ -4,11 +4,13 @@ import rich
 
 from rich.console import Console
 
-from otto_shell.hci import get_input
+from otto_shell.hci import get_input, copy_to_clipboard
 from otto_shell.openai import question
 from otto_shell.state import state, clear_state
+from otto_shell.utils import get_otto_shell_model
 from otto_shell.prompt import get_file_history
 from otto_shell.commands import run_command
+from otto_shell.flows.git import commit_flow
 
 # console setup
 console = Console()
@@ -37,10 +39,27 @@ def decision_tree(user_input: str):
     elif user_input == "reset":
         clear_state()
         rich.print("reset state...")
+    elif user_input.startswith("commit all"):
+        instructions = user_input.replace("commit all", "").strip()
+        commit_flow(instructions=instructions, all_files=True, confirm_commit=True)
+    elif user_input.startswith("commit"):
+        instructions = user_input.replace("commit", "").strip()
+        commit_flow(instructions=instructions, confirm_commit=True)
+    elif user_input == "/model":
+        rich.print(f"{get_otto_shell_model()}")
+    elif user_input == "/copy":
+        if "last_otto_response" in state:
+            copy_to_clipboard(state["last_otto_response"])
+            rich.print("copied to clipboard")
+        else:
+            rich.print("nothing to copy")
+    elif user_input.startswith("!"):
+        os.system(user_input[1:])
     elif user_input.startswith("?"):
         with console.status("asking Otto...", spinner="dots"):
             res = question(user_input[1:], history=state.get("shell_history", []))
         rich.print(res) if res else None
+        state["last_otto_response"] = res
     else:
         res = run_command(user_input)
         rich.print(res) if res else None

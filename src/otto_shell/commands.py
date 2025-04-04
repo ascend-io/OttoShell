@@ -2,28 +2,15 @@
 import os
 import subprocess
 
-from otto_shell.utils import get_otto_shell_aliases
-
-# Define interactive apps once
-INTERACTIVE_APPS = [
-    "vim",
-    "nvim",
-    "nano",
-    "less",
-    "more",
-    "top",
-    "htop",
-    "btop",
-    "vi",
-    "v",
-]
-COMMANDS_OVERRIDES = get_otto_shell_aliases()
+from otto_shell.utils import get_otto_shell_aliases, get_otto_shell_interactive_apps
 
 
+# functions
 def run_command(cmd: str, verbose: bool = False) -> str:
     """Run a command and return its output"""
-    if cmd.strip() in COMMANDS_OVERRIDES:
-        cmd = COMMANDS_OVERRIDES[cmd.strip()]
+    cmds = get_otto_shell_aliases()
+    if cmd.strip() in cmds:
+        cmd = cmds[cmd.strip()]
 
     if cmd.strip() == "os":
         raise ValueError("no os recursion allowed!")
@@ -41,7 +28,7 @@ def run_command(cmd: str, verbose: bool = False) -> str:
     full_cmd = f"zsh -c 'source ~/.bash_aliases && {cmd}'"
 
     actual_cmd = cmd.strip().split()[0] if cmd.strip().split() else ""
-    if actual_cmd in INTERACTIVE_APPS:
+    if actual_cmd in get_otto_shell_interactive_apps():
         subprocess.run(full_cmd, shell=True, env=os.environ, cwd=os.getcwd())
         return ""
 
