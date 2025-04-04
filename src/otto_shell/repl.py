@@ -94,6 +94,9 @@ def decision_tree(user_input: str):
         print_separator()
         rich.print(res) if res else None
         state["last_otto_response"] = res
+        if "all_shell_history" not in state:
+            state["all_shell_history"] = []
+        state["all_shell_history"].extend(state.get("shell_history", []))
         state["shell_history"] = []
 
     else:
