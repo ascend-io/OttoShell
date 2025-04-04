@@ -57,6 +57,8 @@ def question(q: str, model: str | None = None, history: list[str] = []) -> str:
     r = client.post("/responses", json=data)
 
     response_text = ""
+    if r.status_code != 200:
+        return f"Error: {r.status_code}\n\n{r.text}"
     j = r.json()
     state["last_request_id"] = j["id"]
     for output in j["output"]:

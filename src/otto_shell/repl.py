@@ -43,6 +43,9 @@ def display_splash():
     console.print(tagline, style="violet")
 
 
+exit_commands = ["exit", "quit", "bye", "q", "x"]
+
+
 def run_repl():
     display_splash()
     while True:
@@ -50,10 +53,14 @@ def run_repl():
             user_input = get_input(
                 f"{fish_style_cwd()} (os) > ", history=get_file_history()
             )
+            if user_input in exit_commands:
+                rich.print("exiting...")
+                break
             decision_tree(user_input)
         except KeyboardInterrupt:
             continue
         except EOFError:
+            rich.print("exiting...")
             break
         except Exception as e:
             rich.print(f"[red]{e}[/red]")
