@@ -13,24 +13,27 @@ alias install:=sync
 default:
     just --list
 
-# python things
+# setup
 setup:
     @uv venv --python=3.13 --allow-existing
     just sync
 
+# sync
 sync:
     @uv sync --all-extras --upgrade
 
-build-python:
+# build
+build:
     @rm -r dist || true
     @uv build
 
+# format
 format:
     @ruff format .
 
 # publish-test
 release-test:
-    just build-python
+    just build
     @uv publish --publish-url https://test.pypi.org/legacy/ --token ${PYPI_TEST_TOKEN}
 
 # publish
