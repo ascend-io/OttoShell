@@ -7,6 +7,7 @@ from pydantic import BaseModel
 
 from otto_shell.utils import (
     dedent_and_unwrap,
+    get_otto_shell_system_str,
     get_otto_shell_model,
     get_otto_shell_model_effort,
 )
@@ -45,7 +46,7 @@ def question(q: str, model: str | None = None, history: list[str] = []) -> str:
     effort = get_otto_shell_model_effort()
     messages = [{"role": "developer", "content": h} for h in history]
     messages += [{"role": "user", "content": q}]
-    instructions = "You are OttoShell. Help the user with their question."
+    instructions = get_otto_shell_system_str()
     data = {
         "model": model,
         "instructions": instructions,

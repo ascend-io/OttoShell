@@ -3,5 +3,4 @@ state = {}
 
 
 def clear_state():
-    global state
-    state = {}
+    state.clear()

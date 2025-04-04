@@ -45,9 +45,11 @@ def decision_tree(user_input: str):
     elif user_input.startswith("commit"):
         instructions = user_input.replace("commit", "").strip()
         commit_flow(instructions=instructions, confirm_commit=True)
-    elif user_input == "/model":
+    elif user_input == "model":
         rich.print(f"{get_otto_shell_model()}")
-    elif user_input == "/copy":
+    elif user_input == "state":
+        rich.print(state)
+    elif user_input == "copy":
         if "last_otto_response" in state:
             copy_to_clipboard(state["last_otto_response"])
             rich.print("copied to clipboard")
@@ -56,7 +58,9 @@ def decision_tree(user_input: str):
     elif user_input.startswith("!"):
         os.system(user_input[1:])
     elif user_input.startswith("?"):
-        with console.status("asking Otto...", spinner="dots"):
+        with console.status(
+            f"asking Otto ({get_otto_shell_model()})...", spinner="dots"
+        ):
             res = question(user_input[1:], history=state.get("shell_history", []))
         rich.print(res) if res else None
         state["last_otto_response"] = res

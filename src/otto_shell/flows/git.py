@@ -1,3 +1,7 @@
+import os
+import tempfile
+
+
 from otto_shell.hci import confirm
 from otto_shell.openai import client
 from otto_shell.commands import run_command
@@ -6,17 +10,22 @@ from otto_shell.commands import run_command
 def commit_flow(
     instructions: str = "", all_files: bool = False, confirm_commit: bool = True
 ) -> None:
-    diff = run_command("git diff")
+    diff = run_command("git diff origin/main")
     additional_instructions = f"\n\n{instructions}" if instructions else ""
-    instructions = f"Write a git commit for the user. Respond ONLY with the commit message. Do not include any other text. Include all relevant changes from the code diff worth mentioning.{additional_instructions}".strip()
-    print(instructions)
+    instructions = f"Write a git commit for the user. Respond ONLY with the commit message. Do not include any other text like backticks or anything. Include all relevant changes from the code diff worth mentioning.{additional_instructions}".strip()
     message = ai_commit_message(diff, instructions)
     if confirm_commit:
         confirmed = confirm(f"Commit message:\n{message}\n\nProceed?")
         if not confirmed:
             return
-    run_command("git add .") if not all else run_command("git add -A")
-    run_command(f'git commit -m "{message}"')
+    run_command("git add .") if not all_files else run_command("git add -A")
+
+    with tempfile.NamedTemporaryFile(mode="w", delete=False) as commit_file:
+        commit_file.write(message)
+        commit_file_path = commit_file.name
+
+    run_command(f"git commit -F {commit_file_path}")
+    os.remove(commit_file_path)
 
 
 def ai_commit_message(diff: str, instructions: str) -> str:
