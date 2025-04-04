@@ -29,7 +29,7 @@ def newline(event):
 
 # prompt continuation
 def prompt_continuation(width, line_number, is_soft_wrap):
-    return "|" * width
+    return "█" * width
 
 
 # classes
