@@ -38,3 +38,6 @@ release:
     just build-python
     @uv publish --token ${PYPI_TOKEN}
 
+# open
+open:
+    @open https://pypi.org/project/otto-shell
