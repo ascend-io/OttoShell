@@ -19,8 +19,9 @@ dependencies = [
   'prompt-toolkit',
   'pyperclip',
   # AI
-  'openai',
-  'openai-agents',
+  'pydantic',
+  'tiktoken',
+  'httpx[http2]',
 ]
 
 [project.optional-dependencies]

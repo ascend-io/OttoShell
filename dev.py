@@ -2,13 +2,10 @@
 # imports
 import os
 import json
-import asyncio
-
-import otto_shell
+import httpx
+import subprocess
 
 from rich import print
+from pydantic import BaseModel, Field
 
-from openai import OpenAI
-from agents import Agent, Runner
-
-client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+from otto_shell.openai import client, question, str_to_tokens, choose, cast

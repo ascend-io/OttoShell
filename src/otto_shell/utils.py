@@ -32,11 +32,16 @@ def get_otto_shell_config() -> dict:
 
 
 def get_otto_shell_system_str() -> str:
-    filepath = os.path.join(get_otto_shell_dir(), "system.md")
-    if not os.path.exists(filepath):
-        return ""
-    with open(filepath, "r") as f:
-        return f.read()
+    # TODO: update
+    config = get_otto_shell_config()
+    system = config.get("ai").get("system")
+    return system
+
+
+def get_otto_shell_aliases() -> dict:
+    config = get_otto_shell_config()
+    aliases = config.get("aliases", {})
+    return aliases
 
 
 def load_otto_shell_dotenv():
