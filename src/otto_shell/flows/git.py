@@ -5,10 +5,11 @@ from otto_shell.commands import run_command
 
 def commit_flow(
     instructions: str = "", all_files: bool = False, confirm_commit: bool = True
-):
+) -> None:
     diff = run_command("git diff")
-    instructions = "Write a git commit for the user. Respond ONLY with the commit message. Do not include any other text."
-    instructions += f"\n{instructions}" if instructions else ""
+    additional_instructions = f"\n\n{instructions}" if instructions else ""
+    instructions = f"Write a git commit for the user. Respond ONLY with the commit message. Do not include any other text. Include all relevant changes from the code diff worth mentioning.{additional_instructions}".strip()
+    print(instructions)
     message = ai_commit_message(diff, instructions)
     if confirm_commit:
         confirmed = confirm(f"Commit message:\n{message}\n\nProceed?")
@@ -16,8 +17,6 @@ def commit_flow(
             return
     run_command("git add .") if not all else run_command("git add -A")
     run_command("git commit -m '{message}'")
-
-    breakpoint()
 
 
 def ai_commit_message(diff: str, instructions: str) -> str:
