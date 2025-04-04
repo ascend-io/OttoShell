@@ -27,8 +27,10 @@ def run_command(cmd: str, verbose: bool = False) -> str:
 
     full_cmd = f"zsh -c 'source ~/.bash_aliases && {cmd}'"
 
-    actual_cmd = cmd.strip().split()[0] if cmd.strip().split() else ""
-    if actual_cmd in get_otto_shell_interactive_apps():
+    if any(
+        cmd.strip().startswith(interactive_app)
+        for interactive_app in get_otto_shell_interactive_apps()
+    ):
         subprocess.run(full_cmd, shell=True, env=os.environ, cwd=os.getcwd())
         return ""
 
