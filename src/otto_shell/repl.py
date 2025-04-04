@@ -39,12 +39,9 @@ def decision_tree(user_input: str):
     elif user_input == "reset":
         clear_state()
         rich.print("reset state...")
-    elif user_input.startswith("commit all"):
-        instructions = user_input.replace("commit all", "").strip()
-        commit_flow(instructions=instructions, all_files=True, confirm_commit=True)
     elif user_input.startswith("commit"):
         instructions = user_input.replace("commit", "").strip()
-        commit_flow(instructions=instructions, confirm_commit=True)
+        commit_flow(instructions=instructions, all_files=True, confirm_commit=True)
     elif user_input == "model":
         rich.print(f"{get_otto_shell_model()}")
     elif user_input == "state":
