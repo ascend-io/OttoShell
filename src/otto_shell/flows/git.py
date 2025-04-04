@@ -16,7 +16,7 @@ def commit_flow(
         if not confirmed:
             return
     run_command("git add .") if not all else run_command("git add -A")
-    run_command("git commit -m '{message}'")
+    run_command(f"git commit -m '{message}'")
 
 
 def ai_commit_message(diff: str, instructions: str) -> str:
