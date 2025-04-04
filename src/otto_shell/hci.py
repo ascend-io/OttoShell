@@ -6,10 +6,30 @@ from typing import Iterable, List, Optional
 from difflib import unified_diff
 
 from prompt_toolkit import PromptSession
+from prompt_toolkit.enums import EditingMode
 from prompt_toolkit.history import FileHistory, InMemoryHistory
 from prompt_toolkit.document import Document
 from prompt_toolkit.completion import Completer, Completion
-from prompt_toolkit.enums import EditingMode
+from prompt_toolkit.key_binding import KeyBindings
+
+
+# keybindings
+kb = KeyBindings()
+
+
+@kb.add("enter")
+def submit(event):
+    event.current_buffer.validate_and_handle()
+
+
+@kb.add("right")
+def newline(event):
+    event.current_buffer.insert_text("\n")
+
+
+# prompt continuation
+def prompt_continuation(width, line_number, is_soft_wrap):
+    return "|" * width
 
 
 # classes
@@ -268,7 +288,12 @@ class PathCompleter(Completer):
 # functions
 def get_input(prompt_text: str, history: FileHistory | InMemoryHistory) -> str:
     session = PromptSession(
-        history=history, completer=PathCompleter(), editing_mode=EditingMode.VI
+        history=history,
+        completer=PathCompleter(),
+        editing_mode=EditingMode.VI,
+        key_bindings=kb,
+        multiline=True,
+        prompt_continuation=prompt_continuation,
     )
     return session.prompt(prompt_text).strip()
 

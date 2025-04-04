@@ -2,6 +2,7 @@
 import os
 import rich
 import shutil
+import subprocess
 
 from rich.console import Console
 
@@ -79,7 +80,12 @@ def decision_tree(user_input: str):
         else:
             rich.print("nothing to copy")
     elif user_input.startswith("!"):
-        os.system(user_input[1:])
+        subprocess.run(user_input[1:], shell=True, env=os.environ, cwd=os.getcwd())
+    elif user_input.startswith("%"):
+        try:
+            exec(user_input[1:].strip())
+        except Exception as e:
+            rich.print(f"[red]{e}[/red]")
     elif user_input.startswith("?"):
         with console.status(
             f"asking Otto ({get_otto_shell_model()})...", spinner="dots"
@@ -88,6 +94,7 @@ def decision_tree(user_input: str):
         print_separator()
         rich.print(res) if res else None
         state["last_otto_response"] = res
+        state["shell_history"] = []
 
     else:
         res = run_command(user_input)
