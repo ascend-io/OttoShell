@@ -46,6 +46,8 @@ def get_otto_shell_model_effort() -> str:
 def get_otto_shell_system_str() -> str:
     config = get_otto_shell_config()
     system = config.get("ai", {}).get("system", "You are OttoShell.")
+    # add in current time
+    system += f"\n\n## Current date and time: {now().isoformat()}"
     return system
 
 
