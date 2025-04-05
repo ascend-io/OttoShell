@@ -1,5 +1,6 @@
 # imports
 import os
+import shlex
 import pyperclip
 
 from typing import Iterable, List, Optional
@@ -110,74 +111,18 @@ class PathCompleter(Completer):
             yield from self._get_path_completions(current_word, only_dirs=only_dirs)
 
     def _parse_command_line(self, text: str) -> dict:
-        """Parse the command line to extract command, options, and current word."""
-        # Split the text into words
-        words = []
+        """Parse the command line using shlex for simpler, robust tokenization."""
+        words = shlex.split(text)
         current_word = ""
-
-        # Handle multi-word commands with spaces, respecting quotes
-        in_quotes = False
-        quote_char = None
-        escaped = False
-
-        for char in text:
-            if escaped:
-                current_word += char
-                escaped = False
-            elif char == "\\":
-                escaped = True
-            elif char in ('"', "'"):
-                if not in_quotes:
-                    in_quotes = True
-                    quote_char = char
-                elif char == quote_char:
-                    in_quotes = False
-                    quote_char = None
-                current_word += char
-            elif char.isspace() and not in_quotes:
-                if current_word:
-                    words.append(current_word)
-                    current_word = ""
-            else:
-                current_word += char
-
-        # If we have a current word, add it
-        if current_word:
-            words.append(current_word)
-
-        # Default values
-        result = {
+        if text and not text.endswith(" "):
+            current_word = words[-1] if words else ""
+        return {
             "words": words,
             "command": words[0] if words else "",
-            "current_word": words[-1] if words else "",
-            "is_option": False,
-            "expecting_path": False,
+            "current_word": current_word,
+            "is_option": current_word.startswith("-") if current_word else False,
+            "expecting_path": text.endswith(" "),
         }
-
-        # If text ends with space, we're expecting a new word
-        if text.endswith(" "):
-            result["current_word"] = ""
-            result["expecting_path"] = True
-        else:
-            result["is_option"] = result["current_word"].startswith("-")
-
-            # Check if we're in a position to expect a path
-            # For commands that take file args, we expect a path after any flag
-            if (
-                result["command"] in self.file_commands
-                or result["command"] in self.directory_commands
-            ):
-                # After a flag with = (like --file=path)
-                if "=" in result["current_word"] and result["is_option"]:
-                    prefix_parts = result["current_word"].split("=", 1)
-                    result["current_word"] = prefix_parts[1]
-                    result["is_option"] = False
-                    result["expecting_path"] = True
-                # Or after a space following any word
-                elif len(words) > 1:
-                    result["expecting_path"] = True
-
-        return result
 
     def _get_executables_completions(self, prefix: str) -> Iterable[Completion]:
         if not prefix:

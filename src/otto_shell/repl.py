@@ -67,6 +67,12 @@ def run_repl():
             continue
 
 
+def _handle_commit(user_input: str):
+    # Helper to handle commit instructions
+    instructions = user_input.replace("commit", "", 1).strip()
+    commit_flow(instructions=instructions, all_files=True, confirm_commit=True)
+
+
 def decision_tree(user_input: str):
     if not user_input or user_input == "?":
         return
@@ -74,8 +80,7 @@ def decision_tree(user_input: str):
         clear_state()
         rich.print("reset state...")
     elif user_input.startswith("commit"):
-        instructions = user_input.replace("commit", "").strip()
-        commit_flow(instructions=instructions, all_files=True, confirm_commit=True)
+        _handle_commit(user_input)
     elif user_input == "model":
         rich.print(f"{get_otto_shell_model()}")
     elif user_input == "state":

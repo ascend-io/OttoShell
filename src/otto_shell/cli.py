@@ -33,6 +33,10 @@ def shell(
     # arguments
     args: Optional[List[str]] = typer.Argument(None, help="input text"),
 ):
+    """
+    Entry point for the OttoShell interactive shell.
+    Opens configuration editors or launches the REPL based on options.
+    """
     if config:
         program = "vim" if vim else os.environ.get("EDITOR", "vim")
         filename = ".env" if env else "config.toml"
